@@ -1,3 +1,11 @@
+# Forked from [grpc-consul-resolver](https://github.com/mbobakov/grpc-consul-resolver)
+
+change log:
+
+> If there is a tag in which the format is "versionCode_${unixTime}", 
+> 
+> only the ss with the highest unixTime will be selected.
+
 # GRPC consul resolver
 
 Feature rich and easy-to-use resolver which return endpoints for service from the [Hashicorp Consul](https://www.consul.io) and watch for the changes.
