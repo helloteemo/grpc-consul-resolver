@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/consul/api"
@@ -83,6 +84,10 @@ func watchConsulService(ctx context.Context, s servicer, tgt target, out chan<- 
 				tgt.String(),
 			)
 
+			// query the highest versionCode of Node
+
+			ss = queryHighestVersionCodeOfNode(ss)
+
 			ee := make([]string, 0, len(ss))
 			for _, s := range ss {
 				address := s.Service.Address
@@ -123,6 +128,45 @@ func watchConsulService(ctx context.Context, s servicer, tgt target, out chan<- 
 			return
 		}
 	}
+}
+
+func queryHighestVersionCodeOfNode(list []*api.ServiceEntry) []*api.ServiceEntry {
+	var (
+		versionCodeMap = make(map[string][]*api.ServiceEntry, len(list))
+	)
+
+	// group by versionCode
+	// if versionCode is not set, it will be ignored
+	for _, s := range list {
+		for _, tag := range s.Service.Tags {
+			if !strings.HasPrefix(tag, "versionCode_") {
+				continue
+			}
+			code := strings.ReplaceAll(tag, "versionCode_", "")
+			entries := versionCodeMap[code]
+			entries = append(entries, s)
+			versionCodeMap[code] = entries
+		}
+	}
+
+	if len(versionCodeMap) == 0 {
+		return list
+	}
+
+	// query the highest versionCode of Node
+	var (
+		highestVersionCode string
+		res                []*api.ServiceEntry
+	)
+	for code, entries := range versionCodeMap {
+		if highestVersionCode == "" || code > highestVersionCode {
+			highestVersionCode = code
+			res = entries
+		}
+	}
+
+	// returns the highest versionCode of Node
+	return res
 }
 
 func populateEndpoints(ctx context.Context, clientConn resolver.ClientConn, input <-chan []string) {
