@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package tests
@@ -6,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/mbobakov/grpc-consul-resolver"
+	_ "github.com/helloteemo/grpc-consul-resolver"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
