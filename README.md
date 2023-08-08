@@ -1,4 +1,4 @@
-# Forked from [grpc-consul-resolver](https://github.com/helloteemo/grpc-consul-resolver)
+# Forked from [grpc-consul-resolver](https://github.com/mbobakov/grpc-consul-resolver)
 
 change log:
 
